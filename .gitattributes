@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.jar binary
+src/test/resources/hacg-30/** -text whitespace=cr-at-eol
+docs/evidence/2026-11-16-hacg-extraction-30.md -text whitespace=cr-at-eol

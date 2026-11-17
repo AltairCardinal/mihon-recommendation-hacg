@@ -1,0 +1,20 @@
+{
+  "kind": "recommendation",
+  "packageName": "mihon.recommendation.hacg",
+  "versionCode": 1,
+  "apiMajor": 1,
+  "apiMinor": 1,
+  "factories": [
+    {
+      "id": "hacg",
+      "className": "mihon.recommendation.hacg.HacgFactory",
+      "name": "琉璃神社",
+      "language": "zh",
+      "contentRating": "ADULT",
+      "allowedHosts": ["www.hacg.icu"]
+    }
+  ],
+  "legacyBindings": [
+    {"providerId": "hacg", "factoryId": "hacg", "channelMapping": {"legacy": "comic"}}
+  ]
+}

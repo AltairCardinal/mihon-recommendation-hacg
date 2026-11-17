@@ -1,0 +1,6 @@
+.gradle/
+build/
+.preview/
+.gradle-coordinator/
+*.p12
+*.jks

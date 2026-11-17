@@ -1,0 +1,68 @@
+{
+  "snapshots": [
+    {
+      "url": "https://www.hacg.icu/wp/comic.html",
+      "sha256": "abdc3c6c90265c5f82bdf77ea961f9b29981d48ade60c0af8a643ad3914b3462",
+      "articleIds": [
+        "103437",
+        "103433",
+        "103408",
+        "103387",
+        "103364",
+        "103358",
+        "103336",
+        "103327",
+        "103300",
+        "103298"
+      ]
+    },
+    {
+      "url": "https://www.hacg.icu/wp/comic.html/page/2",
+      "sha256": "5af66703987ad8b7af2f8ab8378714dffde0057804de13830c7e1de65f160ca5",
+      "articleIds": [
+        "103251",
+        "103233",
+        "103171",
+        "103133",
+        "103160",
+        "103119",
+        "103129",
+        "103136",
+        "103110"
+      ]
+    },
+    {
+      "url": "https://www.hacg.icu/wp/comic.html/page/3",
+      "sha256": "9016bdd8d47336e4b74a9c19a6d7034060447fb3ff3967aba8c6e525bbe69ed5",
+      "articleIds": [
+        "103107",
+        "103097",
+        "103095",
+        "103087",
+        "103083",
+        "103081",
+        "103058",
+        "103049",
+        "103045",
+        "103012"
+      ]
+    },
+    {
+      "url": "https://www.hacg.icu/wp/comic.html/page/4",
+      "sha256": "51f6630f029b667071cfa9a3b3a1384b198208c59c54cd139aece6f37b906d29",
+      "articleIds": [
+        "102997",
+        "102984",
+        "102973",
+        "102967",
+        "102965",
+        "102956",
+        "102947",
+        "102941",
+        "102934",
+        "102923"
+      ]
+    }
+  ],
+  "selection": "first-30-category-comic-excluding-format-link"
+}
