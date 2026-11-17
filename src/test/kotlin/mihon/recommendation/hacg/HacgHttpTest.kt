@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import mihon.recommendation.api.ArticleMetadataUpgradeProvider
 import mihon.recommendation.api.CommentOrder
 import mihon.recommendation.api.CommentProvider
 import mihon.recommendation.api.DocumentProvider
@@ -281,6 +282,45 @@ class HacgHttpTest {
                 assertThrows(IllegalStateException::class.java) { runBlocking { source.list("comic", ListPurpose.DISCOVER, null) } }
                 assertEquals(1, calls)
             }
+        }
+
+    @Test
+    fun `posting publisher survives RSS to document separately from writer and offline upgrades retain incoming publisher`() =
+        runBlocking<Unit> {
+            var calls = 0
+            val source =
+                provider { request ->
+                    calls++
+                    if (request.url.endsWith("/feed")) {
+                        response(
+                            request,
+                            "application/rss+xml",
+                            """
+                            <rss xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><item>
+                            <link>https://www.hacg.icu/wp/1.html</link><title>[Writer] Book</title>
+                            <dc:creator>Uploader</dc:creator></item></channel></rss>
+                            """.trimIndent(),
+                        )
+                    } else {
+                        response(
+                            request,
+                            "text/html",
+                            """
+                            <article id="post-1"><h1 class="entry-title">[Writer] Book</h1>
+                            <div class="entry-content"><p>作者:Writer</p></div></article>
+                            """.trimIndent(),
+                        )
+                    }
+                }
+            val summary = source.list("comic", ListPurpose.DISCOVER, null).items.single()
+            val document = (source as DocumentProvider).document(summary.article)
+            assertEquals("Uploader", document.metadata.publisher)
+            assertEquals(listOf("Writer"), document.metadata.credits.map { it.name })
+            val cached = document.copy(metadata = document.metadata.copy(publisher = "Cached Uploader"))
+            val upgraded = (source as ArticleMetadataUpgradeProvider).upgradeMetadata(summary, cached)
+            assertEquals("Cached Uploader", upgraded.publisher)
+            assertEquals(listOf("Writer"), upgraded.credits.map { it.name })
+            assertEquals(2, calls)
         }
 
     private fun provider(block: suspend (RecommendationHttpRequest) -> RecommendationHttpResponse) =

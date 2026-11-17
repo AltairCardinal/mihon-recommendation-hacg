@@ -73,6 +73,7 @@ private class HacgProvider(
     CommentProvider,
     ImageRequestProvider {
     private val parser = HacgParser(http, instanceId)
+    private val postingPublishers = LinkedHashMap<RecommendationArticleRef, String>(16, .75f, true)
     private val json = Json { ignoreUnknownKeys = true }
     override val extractionVersion = HacgRecommendationMetadataExtractor.VERSION
 
@@ -117,7 +118,12 @@ private class HacgProvider(
 
     override suspend fun document(article: RecommendationArticleRef): RecommendationDocument {
         val parsed = parser.article(parsedArticle(article))
-        return RecommendationDocument(article, parsed.blocks.map(::toSdkBlock), DocumentCompleteness.FULL, metadata(parsed))
+        return RecommendationDocument(
+            article,
+            parsed.blocks.map(::toSdkBlock),
+            DocumentCompleteness.FULL,
+            metadata(parsed, postingPublisher(article)),
+        )
     }
 
     override suspend fun upgradeMetadata(
@@ -127,7 +133,10 @@ private class HacgProvider(
         require(article.article == document.article) { "Cached article identity changed" }
         parsedArticle(article.article)
         val native = ParsedDocument(document.blocks.flatMap(::toParsedBlocks))
-        return metadata(HacgRecommendationMetadataExtractor.extract(article.title, native))
+        return metadata(
+            HacgRecommendationMetadataExtractor.extract(article.title, native),
+            document.metadata.publisher ?: postingPublisher(article.article),
+        )
     }
 
     override suspend fun comments(
@@ -167,15 +176,38 @@ private class HacgProvider(
         return ParsedArticle(article.remoteId, article.url, "")
     }
 
-    private fun summary(article: ParsedArticle) =
-        RecommendationArticleSummary(
-            RecommendationArticleRef(article.id, article.url),
+    private fun summary(article: ParsedArticle): RecommendationArticleSummary {
+        val reference = RecommendationArticleRef(article.id, article.url)
+        if (article.author.isNotBlank()) {
+            synchronized(postingPublishers) {
+                postingPublishers[reference] = article.author
+                while (postingPublishers.size > 256 ||
+                    postingPublishers.entries.sumOf {
+                        it.key.remoteId.length
+                            .toLong() + it.key.url.length + it.value.length
+                    } > 524_288L
+                ) {
+                    val oldest = postingPublishers.entries.iterator()
+                    oldest.next()
+                    oldest.remove()
+                }
+            }
+        }
+        return RecommendationArticleSummary(
+            reference,
             article.title,
             article.summary,
             timestamp(article.published),
         )
+    }
 
-    private fun metadata(document: ParsedDocument): RecommendationMetadata =
+    private fun postingPublisher(article: RecommendationArticleRef): String? =
+        synchronized(postingPublishers) { postingPublishers[article] }
+
+    private fun metadata(
+        document: ParsedDocument,
+        publisher: String?,
+    ): RecommendationMetadata =
         RecommendationMetadata(
             document.metadataVersion,
             document.works.mapIndexed { index, work ->
@@ -192,6 +224,7 @@ private class HacgProvider(
                     author.aliases,
                 )
             },
+            publisher,
         )
 
     private fun toSdkWork(
