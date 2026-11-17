@@ -39,3 +39,14 @@ python scripts/preview_package.py --jar build/libs/mihon-recommendation-hacg-1.0
 ```
 
 运行签名测试前设置 `HACG_PLUGIN_JAR` 为真实 `pluginJar` 文件，`JAVA_HOME` 为 JDK。脚本创建30天的 `LOCAL PREVIEW ONLY` 自签身份，验证 JAR 后生成匹配的摘要、指纹及目录索引；仅接受显式回环 HTTP 地址。预览私钥、包和目录均在 ignored 目录，密码只用于本地测试，不能用于正式发布。重复运行保留同一预览身份；需要丢弃时只手动删除该预览目录，绝不作为正式发行者证书使用。
+
+
+本机安装预览时，只提供三个公开文件，私钥不放入 HTTP 目录：
+
+```powershell
+New-Item -ItemType Directory -Force .preview/public
+Copy-Item -LiteralPath .preview/repo.json,.preview/recommendation-index-v1.json,.preview/mihon-recommendation-hacg.jar -Destination .preview/public
+python -m http.server 18781 --bind 127.0.0.1 --directory .preview/public
+```
+
+保持此命令在前台运行，在 Desktop「推荐源扩展」添加 `http://127.0.0.1:18781/repo.json`，核对本地预览发行者后确认安装。安装不自动订阅；在「浏览 → 推荐 → 管理来源」选择已安装工厂并确认栏目。停止服务使用 `Ctrl+C`。此服务只用于本机预览，正式发布需使用自己的发行身份和托管地址。
