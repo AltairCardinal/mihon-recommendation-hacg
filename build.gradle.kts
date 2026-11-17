@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.mihon.recommendation"
-version = "1.0.0-preview"
+version = "1.0.0"
 
 kotlin {
     jvmToolchain(21)

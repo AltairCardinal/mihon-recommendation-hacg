@@ -1,6 +1,6 @@
 # 琉璃神社推荐源（独立 JVM 插件）
 
-本站点实现独立消费 `org.mihon:recommendation-api:1.1.0` 发布制品，不引用桌面宿主源码、数据库、Compose、DI 或漫画 Source。内容分级为成人，安装和绑定由宿主确认。当前只提供本地预览包，没有正式发行证书、远端发布或在线兼容承诺。
+本站点实现独立消费 `org.mihon:recommendation-api:1.1.0` 发布制品，不引用桌面宿主源码、数据库、Compose、DI 或漫画 Source。内容分级为成人，安装和绑定由宿主确认。当前发布独立签名的 1.0.0 包，目录与宿主分别更新。
 
 ## 构建
 
@@ -50,3 +50,23 @@ python -m http.server 18781 --bind 127.0.0.1 --directory .preview/public
 ```
 
 保持此命令在前台运行，在 Desktop「推荐源扩展」添加 `http://127.0.0.1:18781/repo.json`，核对本地预览发行者后确认安装。安装不自动订阅；在「浏览 → 推荐 → 管理来源」选择已安装工厂并确认栏目。停止服务使用 `Ctrl+C`。此服务只用于本机预览，正式发布需使用自己的发行身份和托管地址。
+
+## GitHub 安装目录
+
+在 Mihon Desktop「推荐源扩展 → 添加目录」粘贴：
+
+~~~text
+https://raw.githubusercontent.com/AltairCardinal/mihon-recommendation-hacg/main/catalog/repo.json
+~~~
+
+确认发行者指纹后安装，再返回「管理来源」选择琉璃神社和漫画栏目。需要开启显示成人扩展。
+
+发行者 SHA-256 指纹：
+
+~~~text
+bc7bc9e21b266a86673b200a1320a32d7e392029b478a8e2b5c15cb94bd0f612
+~~~
+
+发布包使用独立于本地预览的长期身份。已安装旧预览包的用户需要先卸载旧预览包，再信任本目录安装。更新时复用既有发行证书，私钥仅存本机 ignored 的 .release 目录，须由维护者备份。GitHub 保存公开证书 publisher.cer。
+
+1.0.0 的发布核验覆盖打包与在线目录/签名完整性。既有30篇录制样本与评论回归继续适用，尚未重新进行实时站点兼容验收。

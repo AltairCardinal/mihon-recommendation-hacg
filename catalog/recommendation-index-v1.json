@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "signingKey": "bc7bc9e21b266a86673b200a1320a32d7e392029b478a8e2b5c15cb94bd0f612",
+  "packages": [
+    {
+      "packageName": "mihon.recommendation.hacg",
+      "name": "琉璃神社推荐源",
+      "versionCode": 1,
+      "versionName": "1.0.0",
+      "apiMajor": 1,
+      "apiMinor": 1,
+      "factoryIds": [
+        "hacg"
+      ],
+      "jarUrl": "https://raw.githubusercontent.com/AltairCardinal/mihon-recommendation-hacg/v1.0.0/releases/1.0.0/mihon-recommendation-hacg.jar",
+      "sha256": "0da73eb0bc88dc1369064133c1dcb4697e7ecde2d90399f8e484bf7ed7e2c292"
+    }
+  ]
+}
