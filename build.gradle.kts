@@ -23,6 +23,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.22.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
     testImplementation("org.mihon:recommendation-api:1.1.0")
+    testImplementation("org.mihon:recommendation-rules:1.0.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.3")
@@ -71,4 +72,13 @@ spotless {
         ktlint("1.8.0")
         endWithNewline()
     }
+}
+
+
+// Data-only rules are signed independently from the legacy executable plugin.
+val rulesJar by tasks.registering(Jar::class) {
+    archiveBaseName.set("mihon-subscription-hacg")
+    archiveClassifier.set("rules")
+    from("rules")
+    from("LICENSE")
 }

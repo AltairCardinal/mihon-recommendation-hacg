@@ -1,72 +1,47 @@
-# 琉璃神社推荐源（独立 JVM 插件）
+# 琉璃神社订阅源
 
-本站点实现独立消费 `org.mihon:recommendation-api:1.1.0` 发布制品，不引用桌面宿主源码、数据库、Compose、DI 或漫画 Source。内容分级为成人，安装和绑定由宿主确认。当前发布独立签名的 1.0.0 包，目录与宿主分别更新。
+本仓库维护独立订阅规则、签名数据包与站点回归证据。默认发布方式为声明式规则，Android 与 Desktop 使用相同 JSON 及固定宿主解释器。站点基址、栏目、正文与历史选择器、书目字段和提取表达式均在 rules/subscription-rules.json。
 
-## 构建
+## 添加仓库
 
-需要 JDK 21、Gradle 8.14.4 缓存及依赖缓存；字节码目标为 JVM 17。SDK 仓库必须通过参数显式指定，目录内应具有 Maven 坐标结构：
+在「更多 → 订阅 → 订阅管理 → 订阅仓库」添加下列地址，核对发布者指纹后确认。在订阅管理中选择琉璃神社并订阅漫画栏目。
 
-```text
-gradlew --offline -PrecommendationSdkRepository=file:///absolute/path/to/sdk-maven test --tests mihon.recommendation.hacg.HacgCorpusTest --tests mihon.recommendation.hacg.HacgHttpTest --tests mihon.recommendation.hacg.HacgPackagingTest pluginJar spotlessCheck
-```
+    https://raw.githubusercontent.com/AltairCardinal/mihon-recommendation-hacg/main/catalog/repo.json
 
-编译期 SDK、Kotlin 和协程由宿主提供；插件 JAR 只打包自身与私有 Jsoup、serialization 依赖。不使用额外 Class-Path、JAR 索引或宿主私有依赖回退。HTTP 全部经过每个实例的 `RecommendationHostContext.http`，不创建独立客户端、Cookie 存储或连接池。
+成人来源的可见性跟随「更多 → 设置 → 浏览 → NSFW 图源」。其说明为「在图源、插件列表和订阅中显示」。
+
+发布者 SHA-256 指纹为：
+
+    bc7bc9e21b266a86673b200a1320a32d7e392029b478a8e2b5c15cb94bd0f612
+
+仓库同时声明 subscription_index_v1 和旧 recommendation_index_v1。支持声明式规则的新客户端优先使用前者，旧 Desktop 客户端继续读取独立 JVM 插件 1.0.0。两种产物沿用同一长期发行证书，规则版的包名与工厂 ID 保持一致，版本为 1.1.0。
+
+## 规则数据包
+
+rulesJar 生成包含 subscription-rules.json 和许可文件的纯数据 JAR。包中禁止类、脚本、私钥或未签名 payload。正式签名包位于 releases/1.1.0/mihon-subscription-hacg-rules.jar，目录保存签名包的 SHA-256。客户端先核对传输摘要，再逐 payload 验证发布者证书，最后读取规则中的身份、内容分级和允许域名。目录中的展示字段只供安装前提示。
+
+发行私钥仅存本机 ignored .release 目录，由维护者备份。publisher.cer 是公开证书。更换域名、提高内容分级或更换发行身份需要宿主重新确认相应权限，普通规则更新使用原证书。
 
 ## 能力与边界
 
-- Factory `hacg`，稳定栏目 `comic`；声明旧来源 `hacg` 的占位栏目 `legacy` 绑定到 `comic`。该声明不会自动接管旧记录或订阅。
-- DISCOVER 读取漫画 RSS；HISTORY 每次只返回一页并给出下一页游标，宿主决定数量上限。列表不包含正文。
-- 正文转为可控原生块，丢弃脚本、表单和活动嵌入；元数据保留作品原名、来源别名、期刊/合集类型、收录作品与署名身份（包括未知）。网页发布者和出版社不冒充作者。
-- 离线元数据升级使用原列表标题与缓存正文，不请求网站。
-- 已取得的 RSS 发帖署名单独返回为 publisher，不混入作品作者；离线升级保留输入 publisher。实例内仅保留最近256条、约1 MiB字符预算的发帖署名，重启或淘汰后没有独立发帖证据时允许未知，不从书目作者猜测。
-- 评论只读，首批仅声明已有冻结证据的热门排序；最新/最早在 HTTP 前明确返回不支持，不把自拟协议值作为站点证据。游标绑定实例、文章及排序；不提供发表评论、登录或投票。
-- 初始域名权限仅为已确认的 `www.hacg.icu`。未核实的外域图片请求会明确失败，不放行通配域名；后续加入已确认图片域名需要新包及宿主扩权确认。
-- 本插件是经确认运行的 JVM 代码，并非 OS 沙箱。失败、取消和过大响应不会伪装为空结果；已有缓存由宿主保留。
+- 稳定工厂 ID 为 hacg，栏目 ID 为 comic。订阅动作包含安装、权限确认及首次获取。
+- 发现读取漫画 RSS，历史每次只读取一页，游标绑定实例和栏目。
+- 正文转换为原生段落、图片、链接、引用与剧透。脚本和表单丢弃，外域图片需要显式域名许可。
+- 书目保留原名、来源别名、期刊和合集类型、收录作品以及作者和社团身份。网页发布者、出版社与作品署名分开。
+- 缓存元数据升级使用原列表标题与正文，离线执行。
+- 评论只读，当前只声明有冻结证据的热门排序，分页绑定实例、文章和排序。静态评论配置作为数据提取，宿主不执行网页 JavaScript。
+- 请求全部经过实例独立的宿主 HTTP 上下文。失败、取消、结构变化和过大响应显式报告。
 
-## 固定证据
+## 构建与回归
 
-`src/test/resources/hacg-30/` 保留连续30篇文章的原始精简 HTML、列表顺序和人工金标准。测试逐字段比较原名、别名、署名、署名别名/身份、作品类型和8个合集收录作品，并验证相同缓存的离线提取，禁止由当前提取器生成期望值。
+需要 JDK 21，以及已发布到本地 Maven 的 org.mihon:recommendation-api:1.1.0 和 org.mihon:recommendation-rules:1.0.0。通过参数指定本地 SDK 仓库。
 
-`docs/evidence/2026-11-16-hacg-extraction-30.md` 是移出前的历史证据原文，其中旧路径及旧运行结果不代表本仓库已重新验证。当前仓库以本地测试报告为准，默认不请求原站；实时验证需另行授权，不自动联网。
+    gradlew -PrecommendationSdkRepository=file:///absolute/path/to/sdk-maven test --tests mihon.recommendation.hacg.RuleCorpusTest --tests mihon.recommendation.hacg.RuleHttpTest rulesJar
 
-解析代码及固定证据源自 Mihon Desktop 的既有推荐实现，沿用随附 Apache-2.0 许可；名称规范化仅保留实际使用的纯函数，作为本插件私有实现维护。
+RuleCorpusTest 对声明式工厂执行连续 30 篇人工金标准和离线升级比较。RuleHttpTest 使用原始 HTTP 形状检查发现、历史、正文、评论、图片、失败与取消。src/test/resources/hacg-30/ 保留录制列表顺序、原文和人工判断，禁止由当前提取器生成期望值。这些证据留在本独立仓库。
 
-## 本地签名预览
+旧 HacgCorpusTest、HacgHttpTest 与 HacgPackagingTest 继续覆盖兼容 JVM 插件，通过 pluginJar 构建其旧产物。本地 scripts/preview_package.py 仅用于旧插件回环签名测试。
 
-```text
-python scripts/test_preview_package.py
-python scripts/preview_package.py --jar build/libs/mihon-recommendation-hacg-1.0.0-preview-plugin.jar --output .preview --base-url http://127.0.0.1:18781
-```
+当前规则迁移的 30 篇样本和 9 项 HTTP 行为测试已通过。双端安装及 Android 签名运行时结果由本次宿主交付报告记录。录制样本通过不代表实时网站兼容验收。
 
-运行签名测试前设置 `HACG_PLUGIN_JAR` 为真实 `pluginJar` 文件，`JAVA_HOME` 为 JDK。脚本创建30天的 `LOCAL PREVIEW ONLY` 自签身份，验证 JAR 后生成匹配的摘要、指纹及目录索引；仅接受显式回环 HTTP 地址。预览私钥、包和目录均在 ignored 目录，密码只用于本地测试，不能用于正式发布。重复运行保留同一预览身份；需要丢弃时只手动删除该预览目录，绝不作为正式发行者证书使用。
-
-
-本机安装预览时，只提供三个公开文件，私钥不放入 HTTP 目录：
-
-```powershell
-New-Item -ItemType Directory -Force .preview/public
-Copy-Item -LiteralPath .preview/repo.json,.preview/recommendation-index-v1.json,.preview/mihon-recommendation-hacg.jar -Destination .preview/public
-python -m http.server 18781 --bind 127.0.0.1 --directory .preview/public
-```
-
-保持此命令在前台运行，在 Desktop「推荐源扩展」添加 `http://127.0.0.1:18781/repo.json`，核对本地预览发行者后确认安装。安装不自动订阅；在「浏览 → 推荐 → 管理来源」选择已安装工厂并确认栏目。停止服务使用 `Ctrl+C`。此服务只用于本机预览，正式发布需使用自己的发行身份和托管地址。
-
-## GitHub 安装目录
-
-在 Mihon Desktop「推荐源扩展 → 添加目录」粘贴：
-
-~~~text
-https://raw.githubusercontent.com/AltairCardinal/mihon-recommendation-hacg/main/catalog/repo.json
-~~~
-
-确认发行者指纹后安装，再返回「管理来源」选择琉璃神社和漫画栏目。需要开启显示成人扩展。
-
-发行者 SHA-256 指纹：
-
-~~~text
-bc7bc9e21b266a86673b200a1320a32d7e392029b478a8e2b5c15cb94bd0f612
-~~~
-
-发布包使用独立于本地预览的长期身份。已安装旧预览包的用户需要先卸载旧预览包，再信任本目录安装。更新时复用既有发行证书，私钥仅存本机 ignored 的 .release 目录，须由维护者备份。GitHub 保存公开证书 publisher.cer。
-
-1.0.0 的发布核验覆盖打包与在线目录/签名完整性。既有30篇录制样本与评论回归继续适用，尚未重新进行实时站点兼容验收。
+解析规则与固定证据源自既有独立插件，沿用随附 Apache-2.0 许可。

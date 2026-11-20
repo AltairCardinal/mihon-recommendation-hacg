@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "signingKey": "bc7bc9e21b266a86673b200a1320a32d7e392029b478a8e2b5c15cb94bd0f612",
+  "packages": [
+    {
+      "packageName": "mihon.recommendation.hacg",
+      "name": "琉璃神社订阅源",
+      "versionCode": 2,
+      "versionName": "1.1.0",
+      "apiMajor": 1,
+      "apiMinor": 1,
+      "factoryIds": [
+        "hacg"
+      ],
+      "language": "zh",
+      "contentRating": "ADULT",
+      "jarUrl": "https://raw.githubusercontent.com/AltairCardinal/mihon-recommendation-hacg/main/releases/1.1.0/mihon-subscription-hacg-rules.jar",
+      "sha256": "3f84705bcd0af8dd240815459b8a462faa3c03146516e0cbc2d459eba4ea6ff4"
+    }
+  ]
+}

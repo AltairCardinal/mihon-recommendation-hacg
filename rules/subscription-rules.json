@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "id": "hacg",
+  "name": "琉璃神社",
+  "language": "zh",
+  "contentRating": "ADULT",
+  "versionCode": 2,
+  "versionName": "1.1.0",
+  "allowedHosts": [
+    "www.hacg.icu"
+  ],
+  "baseUrl": "https://www.hacg.icu/wp/",
+  "channels": [
+    {
+      "id": "comic",
+      "name": "漫画",
+      "feedPath": "comic.html/feed",
+      "historyPath": "comic.html",
+      "comments": true
+    }
+  ],
+  "selectors": {
+    "historyItems": "article[id^=post-]:not(.format-link).category-comic",
+    "historyEmpty": ".no-results, .not-found",
+    "historyTitle": ".entry-title a",
+    "historySummary": ".entry-content",
+    "historyDate": "time[datetime], .entry-date[datetime]",
+    "historyNext": ".wp-pagenavi a.nextpostslink, a.nextpostslink",
+    "document": "article#post-{id} .entry-content",
+    "documentTitle": ".entry-title",
+    "spoilers": ".spoiler, .wpdiscuz-spoiler-wrap",
+    "commentItems": ".wpd-comment[id^=wpd-comm-]",
+    "commentNested": ".wpd-comment",
+    "commentDate": ".wpd-comment-date",
+    "commentBody": ".wpd-comment-text",
+    "commentAuthor": ".wpd-comment-author",
+    "commentSorting": "[data-sorting]",
+    "commentActiveSorting": ".wpdiscuz-sort-button-active",
+    "commentContainer": "#wpdcom, [data-comments-count]",
+    "commentCount": "[data-comments-count]",
+    "commentMore": ".wpd-load-more-submit",
+    "commentHasMore": "#wpdiscuzHasMoreComments"
+  },
+  "patterns": {
+    "CREDIT_PREFIX": "^[\\[［【]([^\\]］】]+)[\\]］】]\\s*(.*)$",
+    "CIRCLE_AND_PERSON": ".+?[（(]([^（）()]+)[）)]$",
+    "ORGANIZATION_SHAPED": "(?i)(?:家|社|団|團|組|サークル|スタジオ|Studio|Works)$",
+    "EDITORIAL_OR_PUBLISHER": "編集部|编辑部|編輯部|出版社|出版公司|株式会社|有限会社",
+    "ISSUE": "^(.+?[0-9０-９]{4}年[0-9０-９]{1,2}月号)(?:\\s+(.+))?$",
+    "PARENTHESIZED_ALIAS": "^[（(]([^（）()]+)[）)]$",
+    "TITLE_WITH_PARENTHESIZED_ALIAS": "^(.+?)\\s*[（(]([^（）()]+)[）)]$",
+    "EDITION": "【[^】]*(?:特典|限定|電子版|デジタル|単行本版)[^】]*】",
+    "TRANSLATED_COLLECTION_NOTICE": "本作品收录了《([^《》]+)》",
+    "TRANSLATED_COMPILATION": "^(.+?)汉化合集\\s*[0-9０-９]+\\s*[-~～]\\s*[0-9０-９]+$",
+    "KANA": "[぀-ヿ]",
+    "HAN": "[㐀-鿿]",
+    "TRAILING_RANGE": "(?:\\s*[（(]\\s*[0-9０-９]+\\s*[）)]?\\s*[-~～]\\s*(?:[（(])?[0-9０-９]+\\s*[）)]|\\s+[0-9０-９]+\\s*[-~～]\\s*[0-9０-９]+)\\s*$",
+    "COLLECTION_COUNT": "本[0-9０-９]+冊",
+    "articleId": "/(\\d+)\\.html(?:[?#].*)?$",
+    "historyUrl": "/wp/comic\\.html(?:/page/[0-9]+/?)?",
+    "remoteId": "[0-9]+",
+    "NON_ALIAS": "^(?:[0-9０-９]+|全[0-9０-９]+|[0-9０-９]+ページ)"
+  },
+  "values": {
+    "collectionMarker": "総集編",
+    "contentsMarker": "掲載内容",
+    "previousEditionMarker": "既刊",
+    "articlePath": "{id}.html",
+    "historyIdPrefix": "post-",
+    "commentProtocol": "wpdiscuz",
+    "commentOrder": "by_vote",
+    "creditPriority": "author,person,circle,prefix",
+    "commentConfigObject": "wpdiscuzAjaxObj",
+    "extractionVersion": "1"
+  },
+  "labels": {
+    "author": [
+      "作者",
+      "作家",
+      "著者",
+      "漫画作者"
+    ],
+    "circle": [
+      "社团名",
+      "社團名",
+      "サークル名"
+    ],
+    "publisher": [
+      "出版社名",
+      "出版社",
+      "出版",
+      "ブランド"
+    ],
+    "work": [
+      "作品名"
+    ],
+    "other": [
+      "作品名",
+      "系列名",
+      "シリーズ名",
+      "汉化",
+      "漢化",
+      "译者",
+      "翻译",
+      "标签",
+      "レーベル",
+      "发售日",
+      "発売日",
+      "配信開始日",
+      "年龄指定",
+      "作品形式",
+      "文件形式",
+      "支持的语言",
+      "页数",
+      "ページ数",
+      "題材",
+      "ジャンル",
+      "ファイル容量",
+      "利用期限",
+      "作品内容",
+      "分类",
+      "活动",
+      "定価",
+      "メディア",
+      "ISBN-13"
+    ]
+  },
+  "packageName": "mihon.recommendation.hacg"
+}

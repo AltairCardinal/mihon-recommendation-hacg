@@ -1,5 +1,6 @@
 {
   "name": "琉璃神社推荐源 · AltairCardinal",
   "fingerprint": "bc7bc9e21b266a86673b200a1320a32d7e392029b478a8e2b5c15cb94bd0f612",
-  "recommendation_index_v1": "recommendation-index-v1.json"
+  "recommendation_index_v1": "recommendation-index-v1.json",
+  "subscription_index_v1": "subscription-index-v1.json"
 }
